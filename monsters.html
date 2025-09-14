@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>MapLibre with Video Overlay</title>
+  <link
+    href="https://unpkg.com/maplibre-gl@3.6.1/dist/maplibre-gl.css"
+    rel="stylesheet"
+  />
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+    }
+    #map {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 100%;
+    }
+  </style>
+</head>
+<body>
+  <div id="map"></div>
+
+  <script src="https://unpkg.com/maplibre-gl@3.6.1/dist/maplibre-gl.js"></script>
+  <script>
+    // Initialize the map
+    const map = new maplibregl.Map({
+      style: 'https://tiles.openfreemap.org/styles/liberty',
+      center: [13.388, 52.517], // Berlin
+      zoom: 9.5,
+      container: 'map',
+    });
+
+    // When the map has finished loading
+    map.on('load', () => {
+      // Define the four corners of the video (in [lng, lat])
+      const videoCorners = [
+        [13.25, 52.60], // top-left
+        [13.55, 52.60], // top-right
+        [13.55, 52.45], // bottom-right
+        [13.25, 52.45], // bottom-left
+      ];
+
+      // Add the video source
+      map.addSource('monster-video', {
+        type: 'video',
+        urls: ['https://static-assets.mapbox.com/mapbox-gl-js/drone.mp4'], // path to your video
+        coordinates: videoCorners,
+      });
+
+      // Add a raster layer for the video
+      map.addLayer({
+        id: 'monster-layer',
+        type: 'raster',
+        source: 'monster-video',
+        paint: {
+          'raster-opacity': 0.8,
+        },
+      });
+    });
+  </script>
+</body>
+</html>
